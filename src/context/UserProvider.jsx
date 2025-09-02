@@ -10,9 +10,17 @@ export const UserProvider = ({ children }) => {
         navigate('/work')
     }
 
+    function onSubmitSignup() {
+        navigate('/')
+    }
+
     function handleLogin() {
         // implement authetication API
         navigate('/loginform')
+    }
+
+    function handleSignup() {
+        navigate('/signup')
     }
 
     function handleLogout() {
@@ -21,7 +29,7 @@ export const UserProvider = ({ children }) => {
         navigate('/')
     }
     return (
-        <userContext.Provider value={{ handleLogin, handleLogout, onSubmit }}>
+        <userContext.Provider value={{ handleLogin, handleSignup, handleLogout, onSubmit, onSubmitSignup }}>
             {children}
         </userContext.Provider>
     )

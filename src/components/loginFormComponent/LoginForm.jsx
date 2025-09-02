@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { DevTool } from '@hookform/devtools'
-import { userContext } from '../context/UserProvider';
+import { userContext } from '../../context/UserProvider';
 
 
 const LoginForm = () => {
@@ -44,6 +44,10 @@ const LoginForm = () => {
               required: {
                 value: true,
                 message: "Username is required"
+              },
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Enter a valid email address"
               },
               validate: {
                 notAdmin: (fieldName) => {
