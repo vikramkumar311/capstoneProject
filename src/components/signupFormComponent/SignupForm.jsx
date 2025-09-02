@@ -10,6 +10,7 @@ const SignupForm = () => {
     defaultValues: {
       firstName: "",
       lastName: "",
+      phoneNumber: "",
       email: "",
       dob: "",
       password: "",
@@ -18,15 +19,16 @@ const SignupForm = () => {
 
   });
 
-  const { register, control, handleSubmit, formState } = form;
+  const { register, control, handleSubmit, formState, getValues } = form;
   const { errors } = formState;
   const { onSubmitSignup } = useContext(userContext)
 
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
-        onSubmit={handleSubmit(onSubmitSignup)}
+        onSubmit={handleSubmit((data) => onSubmitSignup(data))}
         noValidate
         className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
       >
@@ -43,11 +45,24 @@ const SignupForm = () => {
             placeholder="Enter your first name"
             className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.firstName ? 'border-red-500' : 'border-gray-300'
               }`}
+            // validation
             {...register("firstName", {
               required: {
                 value: true,
                 message: "first name is required"
               },
+              minLength: {
+                value: 2,
+                message: "First name must be at least 2 characters"
+              },
+              maxLength: {
+                value: 30,
+                message: "First name is too long"
+              },
+              pattern: {
+                value: /^[A-Za-z]+$/,
+                message: "Only alphabets are allowed"
+              }
             })}
           />
           <p className="text-red-500 text-sm mt-1">{errors.firstName?.message}</p>
@@ -70,30 +85,54 @@ const SignupForm = () => {
                 value: true,
                 message: "last name is required"
               },
+              minLength: {
+                value: 2,
+                message: "First name must be at least 2 characters"
+              },
+              maxLength: {
+                value: 30,
+                message: "First name is too long"
+              },
+              pattern: {
+                value: /^[A-Za-z]+$/,
+                message: "Only alphabets are allowed"
+              }
             })}
           />
           <p className="text-red-500 text-sm mt-1">{errors.lastName?.message}</p>
         </div>
 
         {/* mobile phone */}
-        <div>
-          <label htmlFor="phoneNumber">
+        <div className='mb-4'>
+          <label htmlFor="phoneNumber" className='form-label'>
             Phone Number
           </label>
-          <input 
-            type="number" 
-            id="number"
+          <input
+            type="text"
+            id="phoneNumber"
             placeholder='Enter your number'
+            inputMode='numeric' // brings up numeric keypad on mobile
+            pattern='[0-9]*' // restrict input to digit
+            className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.phoneNumber ? 'border-red-500' : 'border-gray-300'
+              }`}
             {...register("phoneNumber", {
+              valueAsNumber: true,
               required: {
                 value: true,
                 message: "Phone number is required"
-              }
+              },
+              pattern: {
+                value: /^[0-9]{10}$/,
+                message: "Phone number must be 10 digits"
+              },
+              
             })}
           />
+
+          <p className="text-red-500 text-sm mt-1">{errors.phoneNumber?.message}</p>
         </div>
 
-        
+
         {/* email address */}
         <div className="mb-4">
           <label htmlFor="email" className='form-label'>
@@ -113,6 +152,10 @@ const SignupForm = () => {
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                 message: "Enter a valid email address"
+              },
+              maxLength: {
+                value: 100,
+                message: "Length of Email address exceeded"
               },
               validate: {
                 notAdmin: (fieldName) => {
@@ -142,8 +185,14 @@ const SignupForm = () => {
                 message: "Date of Birth is required"
               },
               validate: {
-                notAdmin: (fieldName) => {
-                  return fieldName !== "admin@example.com" || "Enter a different email id";
+                notFutureDate: (value) => {
+                  if (!value) return true;
+                  const selectedDate = new Date(value);
+                  const today = new Date();
+                  // Remove time part for accurate comparison
+                  selectedDate.setHours(0,0,0,0);
+                  today.setHours(0,0,0,0);
+                  return selectedDate <= today || "Date of Birth cannot be in the future";
                 }
               }
             })}
@@ -167,6 +216,18 @@ const SignupForm = () => {
               required: {
                 value: true,
                 message: "Password is required"
+              },
+              minLength: {
+                value: 8,
+                message: "Password must be 8-20 letter long"
+              },
+              maxLength: {
+                value: 20,
+                message: "Password must be 8-20 letter long"
+              },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).+$/,
+                message: "Password must include uppercase, lowercase, number, and special character"
               }
             })}
           />
@@ -187,7 +248,9 @@ const SignupForm = () => {
               required: {
                 value: true,
                 message: "Confirm Password is required"
-              }
+              },
+              validate: value =>
+                value === getValues("password") || "Password does not match"
             })}
           />
           <p className="text-red-500 text-sm mt-1">{errors.confirmPassword?.message}</p>
@@ -199,6 +262,8 @@ const SignupForm = () => {
         >
           Submit
         </button>
+
+        
       </form>
     </div>
   )
