@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
-import ImageLogo from '../unitComponents/ImageLogo'
-import Button from '../unitComponents/Button'
+import Button from '../common/Button'
 import { userContext } from '../../context/UserProvider'
+import ImageLogo from '../common/ImageLogo'
 
 const NavBar = () => {
   const { handleLogin, handleSignup, handleLogout, status } = useContext(userContext)
