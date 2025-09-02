@@ -1,35 +1,23 @@
-import React, { createContext } from "react";
+import React, { createContext, useState } from "react";
 import { useNavigate } from 'react-router-dom'
 export const userContext = createContext();
 
 export const UserProvider = ({ children }) => {
+    const [status, setStatus] = useState(true);
+
     const navigate = useNavigate()
 
     function onSubmit() {
+
+        setStatus(false);
+
         console.log('Form Submitted')
-        navigate('/work')
-    }
+        navigate('/work') // This must be a protected route
 
-    function onSubmitSignup(data) {
-        try {
-            // post API is required from backend
-            // post API is required
-            // const response = await// API
-            alert("Signup Successful")
-            navigate('/')
-        } catch (error) {
-            alert(response.error)
-        }
-        console.log(data)
-
-    }
-
-    function handleLogin() {
-        navigate('/loginform')
         try {
             // push API is required from backend
             // Replace with your backend login API
-            // const response = await axios.post("", data);
+            // const response = await axios.post("Enter you API", data);
             console.log("API Response", response.data)
 
             if(response.data.success) {
@@ -55,19 +43,39 @@ export const UserProvider = ({ children }) => {
         }
     }
 
+    function onSubmitSignup(data) {
+        try {
+            // post API is pass the date to backend 
+            // Replace with your backend login API
+            // const response = await axios.post("Enter your API", data);
+            alert("Signup Successful")
+            navigate('/')
+        } catch (error) {
+            alert(response.error)
+        }
+        console.log(data)
+
+    }
+
+    function handleLogin() {
+        navigate('/loginform') 
+        
+    }
+
     function handleSignup() {
         navigate('/signup')
     }
 
     function handleLogout() {
-        // remove the session and navigate to the login page
+        // remove the session (token) and navigate to the login page
+        setStatus(true);
         console.log("Logout")
         navigate('/')
     }
 
 
     return (
-        <userContext.Provider value={{ handleLogin, handleSignup, handleLogout, onSubmit, onSubmitSignup }}>
+        <userContext.Provider value={{ handleLogin, handleSignup, handleLogout, onSubmit, onSubmitSignup, status }}>
             {children}
         </userContext.Provider>
     )
