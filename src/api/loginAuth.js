@@ -1,12 +1,13 @@
 import axios from "axios";
+import { email } from "zod";
 
-const API_URL = "";
+const API_URL = "https://reqres.in/api"; // login api
 
 export async function loginUser(data, navigate, setServerError, setLoading, setStatus) {
     try {
         setLoading(true);
         const response = await axios.post(`${API_URL}/login`, data)
-
+     
         if (response.data.success) {
             // save token + user info
             const {token, user} = response.data

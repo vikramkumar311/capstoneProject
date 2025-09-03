@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { userContext } from '../../context/UserProvider';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginScheme } from '../../validations/loginSchema';
-
+import { Link } from 'react-router-dom';
 
 const LoginForm = () => {
 
@@ -90,7 +90,20 @@ const LoginForm = () => {
         >
           Submit
         </button>
+
+        <div className="mt-6 text-center">
+          <span className="text-gray-700">New user? </span>
+          <Link
+            to="/signup"
+            className="text-blue-600 hover:underline font-semibold"
+          >
+            Create an account
+          </Link>
+        </div>
+
       </form>
+
+
 
     </div>
   )

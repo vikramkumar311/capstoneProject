@@ -2,7 +2,7 @@ import axios from 'axios'
 
 
 // api based url (change according to your backend)
-const API_URL = "";
+const API_URL = ""; // signup api
 
 export async function onSubmitSignup(data, navigate) {
     try {
