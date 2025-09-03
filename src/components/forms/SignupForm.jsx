@@ -1,16 +1,21 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { DevTool } from '@hookform/devtools'
 import { userContext } from '../../context/UserProvider';
 import './SignupForm.css'
+import { useNavigate } from 'react-router-dom';
+import { onSubmitSignup } from '../../api/signupAuth';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signupSchema } from '../../validations/signupSchema';
 
 const SignupForm = () => {
 
   const form = useForm({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
-      phoneNumber: "",
+      userId: "",
       email: "",
       dob: "",
       password: "",
@@ -21,14 +26,14 @@ const SignupForm = () => {
 
   const { register, control, handleSubmit, formState, getValues } = form;
   const { errors } = formState;
-  const { onSubmitSignup } = useContext(userContext)
 
-  
+  const navigate = useNavigate();
+  const { suggestions, setSuggestions } = useContext(userContext);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
-        onSubmit={handleSubmit((data) => onSubmitSignup(data))}
+        onSubmit={handleSubmit((data) => onSubmitSignup(data, navigate, setSuggestions))}
         noValidate
         className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
       >
@@ -45,25 +50,8 @@ const SignupForm = () => {
             placeholder="Enter your first name"
             className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.firstName ? 'border-red-500' : 'border-gray-300'
               }`}
-            // validation
-            {...register("firstName", {
-              required: {
-                value: true,
-                message: "first name is required"
-              },
-              minLength: {
-                value: 2,
-                message: "First name must be at least 2 characters"
-              },
-              maxLength: {
-                value: 30,
-                message: "First name is too long"
-              },
-              pattern: {
-                value: /^[A-Za-z]+$/,
-                message: "Only alphabets are allowed"
-              }
-            })}
+
+            {...register("firstName")}
           />
           <p className="text-red-500 text-sm mt-1">{errors.firstName?.message}</p>
         </div>
@@ -80,30 +68,45 @@ const SignupForm = () => {
             placeholder="Enter your last name"
             className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.lastName ? 'border-red-500' : 'border-gray-300'
               }`}
-            {...register("lastName", {
-              required: {
-                value: true,
-                message: "last name is required"
-              },
-              minLength: {
-                value: 2,
-                message: "First name must be at least 2 characters"
-              },
-              maxLength: {
-                value: 30,
-                message: "First name is too long"
-              },
-              pattern: {
-                value: /^[A-Za-z]+$/,
-                message: "Only alphabets are allowed"
-              }
-            })}
+            {...register("lastName")}
           />
           <p className="text-red-500 text-sm mt-1">{errors.lastName?.message}</p>
         </div>
 
+
+
+        {/* userId */}
+        <div className="mb-4">
+          <label htmlFor="userId" className='form-label'>
+            User Id
+          </label>
+          <input
+            type="text"
+            id="userId"
+            placeholder="Enter your last name"
+            className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.lastName ? 'border-red-500' : 'border-gray-300'
+              }`}
+            {...register("userId")}
+          />
+
+          {/* Validatio Error */}
+          <p className="text-red-500 text-sm mt-1">{errors.userId?.message}</p>
+
+          {/* Suggestions */}
+          {suggestions.length > 0 && (
+            <div className="mt-2">
+              <p className="text-gray-600 text-sm">Try one of these:</p>
+              <ul className="list-disc list-inside text-blue-600">
+                {suggestions.map((s, i) => (
+                  <li key={i}>{s}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
         {/* mobile phone */}
-        <div className='mb-4'>
+        {/* <div className='mb-4'>
           <label htmlFor="phoneNumber" className='form-label'>
             Phone Number
           </label>
@@ -130,7 +133,7 @@ const SignupForm = () => {
           />
 
           <p className="text-red-500 text-sm mt-1">{errors.phoneNumber?.message}</p>
-        </div>
+        </div> */}
 
 
         {/* email address */}
@@ -144,25 +147,7 @@ const SignupForm = () => {
             placeholder="Enter your mail address"
             className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.email ? 'border-red-500' : 'border-gray-300'
               }`}
-            {...register("email", {
-              required: {
-                value: true,
-                message: "email is required"
-              },
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Enter a valid email address"
-              },
-              maxLength: {
-                value: 100,
-                message: "Length of Email address exceeded"
-              },
-              validate: {
-                notAdmin: (fieldName) => {
-                  return fieldName !== "admin@example.com" || "Enter a different email id";
-                }
-              }
-            })}
+            {...register("email")}
           />
           <p className="text-red-500 text-sm mt-1">{errors.email?.message}</p>
         </div>
@@ -179,23 +164,7 @@ const SignupForm = () => {
             placeholder="Enter your Dob"
             className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.dob ? 'border-red-500' : 'border-gray-300'
               }`}
-            {...register("dob", {
-              required: {
-                value: true,
-                message: "Date of Birth is required"
-              },
-              validate: {
-                notFutureDate: (value) => {
-                  if (!value) return true;
-                  const selectedDate = new Date(value);
-                  const today = new Date();
-                  // Remove time part for accurate comparison
-                  selectedDate.setHours(0,0,0,0);
-                  today.setHours(0,0,0,0);
-                  return selectedDate <= today || "Date of Birth cannot be in the future";
-                }
-              }
-            })}
+            {...register("dob")}
           />
           <p className="text-red-500 text-sm mt-1">{errors.dob?.message}</p>
         </div>
@@ -212,24 +181,7 @@ const SignupForm = () => {
             placeholder="Enter your password"
             className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.password ? 'border-red-500' : 'border-gray-300'
               }`}
-            {...register("password", {
-              required: {
-                value: true,
-                message: "Password is required"
-              },
-              minLength: {
-                value: 8,
-                message: "Password must be 8-20 letter long"
-              },
-              maxLength: {
-                value: 20,
-                message: "Password must be 8-20 letter long"
-              },
-              pattern: {
-                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).+$/,
-                message: "Password must include uppercase, lowercase, number, and special character"
-              }
-            })}
+            {...register("password")}
           />
           <p className="text-red-500 text-sm mt-1">{errors.password?.message}</p>
         </div>
@@ -244,14 +196,7 @@ const SignupForm = () => {
             placeholder="Re-Enter your password"
             className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
               }`}
-            {...register("confirmPassword", {
-              required: {
-                value: true,
-                message: "Confirm Password is required"
-              },
-              validate: value =>
-                value === getValues("password") || "Password does not match"
-            })}
+            {...register("confirmPassword")}
           />
           <p className="text-red-500 text-sm mt-1">{errors.confirmPassword?.message}</p>
         </div>
@@ -263,10 +208,12 @@ const SignupForm = () => {
           Submit
         </button>
 
-        
+
       </form>
     </div>
   )
 }
 
 export default SignupForm
+
+
