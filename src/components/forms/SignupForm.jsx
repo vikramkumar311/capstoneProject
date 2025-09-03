@@ -159,18 +159,18 @@ const SignupForm = () => {
             Date of Birth
           </label>
           <input
-            type="date"
+            type="text"
             id="dob"
-            placeholder="Enter your Dob"
+            placeholder="DD-MM-YYYY"
             className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.dob ? 'border-red-500' : 'border-gray-300'
               }`}
             {...register("dob")}
+            pattern="\d{2}-\d{2}-\d{4}"
+            maxLength={10}
+            inputMode="numeric"
           />
           <p className="text-red-500 text-sm mt-1">{errors.dob?.message}</p>
         </div>
-
-
-        {/* Password address */}
         <div className="mb-6">
           <label htmlFor="password" className='form-label'>
             Password

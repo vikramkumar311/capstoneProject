@@ -1,7 +1,7 @@
 import axios from "axios";
 import { email } from "zod";
 
-const API_URL = "https://reqres.in/api"; // login api
+const API_URL = ""; // paste your login api
 
 export async function loginUser(data, navigate, setServerError, setLoading, setStatus) {
     try {

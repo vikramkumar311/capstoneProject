@@ -34,7 +34,10 @@ export const signupSchema = z.object({
     .nonempty("Date of Birth is required")
     .refine((val) => {
       if (!val) return true;
-      const selectedDate = new Date(val);
+      // Expecting dob in dd-mm-yyyy format
+      const [day, month, year] = val.split("-");
+      if (!day || !month || !year) return false;
+      const selectedDate = new Date(`${year}-${month}-${day}`);
       const today = new Date();
       selectedDate.setHours(0, 0, 0, 0);
       today.setHours(0, 0, 0, 0);

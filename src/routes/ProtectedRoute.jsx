@@ -12,3 +12,5 @@ export default function ProtectedRoute({ children }) {
   // If token exists, allow access
   return children;
 }
+
+
