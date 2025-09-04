@@ -1,29 +1,39 @@
 import axios from 'axios'
 
-
-// api based url (change according to your backend)
-const API_URL = "http://localhost:8080/api/signup"; // paste your signup api
+const API_URL = "http://localhost:8080/api/signup";
 
 export async function onSubmitSignup(data, navigate, setSuggestions) {
-    // clear previous suggestions
     try {
-        // call backend API
-        const response = await axios.post(`${API_URL}`, data)
+        const response = await axios.post(API_URL, data);
 
-        if (response.data.status) {
-            // user created successfully
-            alert("Signup Successful!")
-            navigate("/")
-        } else {
-            // user already exits, update suggestions state
-            setSuggestions(response.data.suggestions || [])
+        // if backend returns 200 (success)
+        if (response.status === 200) {
+            alert(response.data.message);
+            navigate("/");
         }
+
     } catch (error) {
-        console.log("Signup error: ", error)
-        alert("Something went wrong. Please try again")
+        if (error.response) {
+            // Backend responded with error status
+            const { status, data } = error.response;
+
+            if (status === 409) {
+                // user already exists
+                setSuggestions(data.suggestions || []);
+            } else if (status === 400) {
+                // validation failed
+                alert(data.error || "Validation failed");
+            } else {
+                alert(data.message || "Something went wrong");
+            }
+        } else if (error.request) {
+            // No response from server (network error)
+            alert("No response from server. Please try again.");
+        } else {
+            // Other unexpected errors
+            alert("Unexpected error: " + error.message);
+        }
+
+        console.error("Signup error:", error);
     }
-
-//    console.log("Form Data Submitted:", data)
-
-
 }
