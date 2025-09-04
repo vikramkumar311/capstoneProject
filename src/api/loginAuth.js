@@ -1,25 +1,26 @@
 import axios from "axios";
 import { email } from "zod";
 
-const API_URL = ""; // paste your login api
+const API_URL = "http://localhost:8080/api/auth/login"; // paste your login api
 
 export async function loginUser(data, navigate, setServerError, setLoading, setStatus) {
     try {
         setLoading(true);
-        const response = await axios.post(`${API_URL}/login`, data)
-     
-        if (response.data.success) {
+        const response = await axios.post(`${API_URL}`, data)
+        if (response.status) {
             // save token + user info
-            const {token, user} = response.data
+            const {accessToken, refreshToken, tokenType} = response.data
             setStatus(false);
             if(data.rememberMe) {
                 // Persistent login
-                localStorage.setItem("token", token);
-                localStorage.setItem("user", JSON.stringify(user))
+                localStorage.setItem("accessToken", accessToken);
+                localStorage.setItem("refreshToken", refreshToken);
             } else {
                 // Temporary login (clears on tab/browser close)
-                sessionStorage.setItem("token", token);
-                sessionStorage.setItem("user", JSON.stringify(user))
+                sessionStorage.setItem("token", refreshToken);
+                sessionStorage.setItem("user", refreshToken);
+
+                // here is the problem
             }
 
             alert("Login successful")

@@ -1,15 +1,16 @@
 import { z } from "zod"
 
 export const loginScheme = z.object({
-    username: z
+    userId: z
         .string()
-        .nonempty("Email addres is required")
-        .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email address"),
+        .nonempty("Username  is required"),
 
 
     password: z
         .string()
         .nonempty("Password is required"),
+
+    rememberMe: z.boolean().optional(),
 
 })
 

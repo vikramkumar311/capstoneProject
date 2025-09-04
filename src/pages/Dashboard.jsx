@@ -3,7 +3,7 @@ import useIdleLogout from "../hooks/useIdleLogout"
 
 
 const Dashboard = () => {
-useIdleLogout(5000)
+useIdleLogout(50000)
     return (
         <NavBar />
     )

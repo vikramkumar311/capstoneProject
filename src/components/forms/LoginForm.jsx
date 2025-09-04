@@ -12,8 +12,9 @@ const LoginForm = () => {
   const form = useForm({
     resolver: zodResolver(loginScheme),
     defaultValues: {
-      username: "",
+      userId: "",
       password: "",
+      rememberMe: false,
     },
 
   });
@@ -35,20 +36,20 @@ const LoginForm = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
 
-        {/* Username */}
+        {/* UserId */}
         <div className="mb-4">
-          <label htmlFor="username" className="block text-gray-700 font-semibold mb-2">
-            Username
+          <label htmlFor="userId" className="block text-gray-700 font-semibold mb-2">
+            UserId
           </label>
           <input
-            type="email"
-            id="username"
-            placeholder="Enter your mail id"
+            type="text"
+            id="userId"
+            placeholder="Enter your userId"
             className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${errors.username ? 'border-red-500' : 'border-gray-300'
               }`}
-            {...register("username")}
+            {...register("userId")}
           />
-          <p className="text-red-500 text-sm mt-1">{errors.username?.message}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.userId?.message}</p>
         </div>
 
 
@@ -99,10 +100,10 @@ const LoginForm = () => {
           >
             Create an account
           </Link>
+
         </div>
 
       </form>
-
 
 
     </div>

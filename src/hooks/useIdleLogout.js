@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { userContext } from "../context/UserProvider";
 import { set } from "react-hook-form";
 
-export default function useIdleLogout(timeout = 5000) {
+export default function useIdleLogout(timeout = 50000) {
     const navigate = useNavigate();
     const {setStatus} = useContext(userContext)
     useEffect(() => {

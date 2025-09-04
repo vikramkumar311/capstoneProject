@@ -2,14 +2,15 @@ import axios from 'axios'
 
 
 // api based url (change according to your backend)
-const API_URL = ""; // paste your signup api
+const API_URL = "http://localhost:8080/api/signup"; // paste your signup api
 
-export async function onSubmitSignup(data, navigate) {
+export async function onSubmitSignup(data, navigate, setSuggestions) {
+    // clear previous suggestions
     try {
         // call backend API
         const response = await axios.post(`${API_URL}`, data)
 
-        if (response.data.success) {
+        if (response.data.status) {
             // user created successfully
             alert("Signup Successful!")
             navigate("/")
@@ -22,7 +23,7 @@ export async function onSubmitSignup(data, navigate) {
         alert("Something went wrong. Please try again")
     }
 
-    console.log("Form Data Submitted:", data)
+//    console.log("Form Data Submitted:", data)
 
 
 }
